@@ -12,10 +12,13 @@ import projects.service.ProjectService;
 public class ProjectsApp {
 	private Scanner scanner = new Scanner(System.in);
 	private ProjectService projectService = new ProjectService();
+	private Project curProject;
 	
 	// @formatter:off
 	private List<String> operations = List.of(
-			"1) Add a project"
+			"1) Add a project",
+			"2) List projects",
+			"3) Select a project"
 	);
 	// @formatter:on
 			
@@ -41,6 +44,14 @@ public class ProjectsApp {
 					createProject();
 					break;
 					
+				case 2:
+					listProjects();
+					break;
+					
+				case 3: 
+					selectProject();
+					break;
+					
 				default: 
 					System.out.println("\n" + selection + " is not a valid selection. Try again.");
 					break;
@@ -51,6 +62,25 @@ public class ProjectsApp {
 				System.out.println("\nError: " + e + ". Try Again.");
 			}
 		}
+		
+	}
+
+	private void selectProject() {
+		listProjects();
+		Integer projectID = getIntInput("Enter the project ID to select a project: ");
+		curProject = null;
+		
+		curProject = projectService.fetchProjectByID(projectID);
+				
+		
+	}
+
+	private void listProjects() {
+		List<Project> projects = projectService.fetchAllProjects();
+		
+		System.out.println("\nProjects: ");
+		
+		projects.forEach(project -> System.out.println(" " + project.getProjectId() + ": " + project.getProjectName()));
 		
 	}
 
@@ -108,6 +138,13 @@ public class ProjectsApp {
 //		for (String operation : operations) {
 //			System.out.println("   " + operation);
 //		}
+		
+		if (Objects.isNull(curProject)) {
+			System.out.println("\nYou have not selected a project.");
+		}
+		else {
+			System.out.println("\nYou have selected the project " + curProject + " to work on.");
+		}
 	}
 
 	private Integer getIntInput(String prompt) {
